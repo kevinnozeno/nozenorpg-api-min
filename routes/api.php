@@ -21,7 +21,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->get('/testToken', function (Request $request) {
-    return 'testToken';
+    return 'token is good';
 });
 
 Route::post('/register', [UserController::class, 'store']);
