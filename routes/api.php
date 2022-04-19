@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActionController;
+use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +25,11 @@ Route::middleware(['auth:sanctum'])->get('/testToken', function (Request $reques
     return 'token is good';
 });
 
-Route::post('/register', [UserController::class, 'store']);
+Route::resources([
+    'users' => UserController::class,
+    'characters' => CharacterController::class
+]);
+
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout']);
 

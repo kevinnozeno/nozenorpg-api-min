@@ -49,15 +49,6 @@ class UserController extends Controller
             return response()->json(
                 $token->plainTextToken, 200);
         }
-
-//        Auth::login($user, $remember = true);
-
-//        if (Auth::attempt($request->only(['username','password']), true)) {
-//            return response()->json(Auth::user(), 200);
-//        }
-//        throw ValidationException::withMessages([
-//            'username' => ['The provided credentials are incorect.']
-//        ]);
     }
 
     public function logout(): JsonResponse
@@ -95,12 +86,12 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show(User $user): JsonResponse
     {
-        //
+        return response()->json($user);
     }
 
     /**
