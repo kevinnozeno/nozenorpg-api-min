@@ -36,6 +36,9 @@ class UserController extends Controller
 
         $user = User::query()
             ->where('username', $request->username)
+            ->with(['characters' => function ($query) {
+                $query->select('id', 'name');
+            }])
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -46,8 +49,10 @@ class UserController extends Controller
 
         if (Auth::attempt($validated)) {
             $token = $user->createToken('token');
-            return response()->json(
-                $token->plainTextToken, 200);
+            $user['token'] = $token->plainTextToken;
+            return response()->json($user, 200);
+        } else {
+            return response()->json('error', 404);
         }
     }
 
@@ -91,7 +96,7 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
-        return response()->json($user);
+        return response()->json(User::findOrFail($user->id)->with('characters')->first());
     }
 
     /**
