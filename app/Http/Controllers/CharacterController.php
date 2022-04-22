@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Character;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -62,5 +63,27 @@ class CharacterController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Character $character
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function showOfUser(Character $character, User $user): JsonResponse
+    {
+        $characterUser = Character::query()
+            ->where('id', $character->id)
+            ->with(['users' => function ($query) use ($user) {
+                $query->where('id', $user->id);
+            }])
+            ->first();
+
+        $character->actual_pv = $characterUser->pv + $characterUser->users[0]->pivot->pv_modif;
+        $character->level = $characterUser->users[0]->pivot->level;
+
+        return response()->json($character);
     }
 }

@@ -96,7 +96,7 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
-        return response()->json(User::findOrFail($user->id)->with('characters')->first());
+        return response()->json(User::query()->where('id', $user->id)->with('characters')->first());
     }
 
     /**
