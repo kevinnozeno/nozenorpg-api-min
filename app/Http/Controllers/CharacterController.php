@@ -83,6 +83,7 @@ class CharacterController extends Controller
 
         $character->actual_pv = $characterUser->pv + $characterUser->users[0]->pivot->pv_modif;
         $character->level = $characterUser->users[0]->pivot->level;
+        $character->user_id = $characterUser->users[0]->pivot->user_id;
 
         return response()->json($character);
     }

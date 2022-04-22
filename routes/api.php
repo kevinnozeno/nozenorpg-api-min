@@ -33,8 +33,8 @@ Route::resources([
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout']);
 
-Route::post('/attack', [ActionController::class, 'attack']);
-Route::post('/cast', [ActionController::class, 'cast']);
-Route::post('/heal', [ActionController::class, 'heal']);
+Route::patch('/characters/{character}/users/{user}/attack', [ActionController::class, 'attack']);
+Route::patch('/characters/{character}/users/{user}/cast', [ActionController::class, 'cast']);
+Route::patch('/characters/{character}/users/{user}/heal', [ActionController::class, 'heal']);
 
 Route::get('/characters/{character}/users/{user}', [CharacterController::class, 'showOfUser']);
