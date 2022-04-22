@@ -30,7 +30,7 @@ class ActionController extends Controller
 
         $targetUser = ((new CharacterController())->showOfUser(Character::find($request->target['id']), User::find($request->target['user_id'])))->getData();
 
-        event(new NewAction($targetUser));
+        event(new NewAction('channel', 'attack', $targetUser));
         return response()->json($targetUser, 200);
     }
 
@@ -53,7 +53,7 @@ class ActionController extends Controller
 
         $targetUser = ((new CharacterController())->showOfUser(Character::find($request->target['id']), User::find($request->target['user_id'])))->getData();
 
-        event(new NewAction($targetUser));
+        event(new NewAction('channel', 'cast', $targetUser));
         return response()->json($targetUser, 200);
     }
 
@@ -69,6 +69,7 @@ class ActionController extends Controller
             ->first();
 
         $new_pv_modif = $targetUser->users[0]->pivot->pv_modif + $characterUser->heal;
+        $new_pv_modif = $new_pv_modif > 0 ? 0 : $new_pv_modif;
 
         Character::find($targetUser->id)->users()->updateExistingPivot($targetUser->users[0]->pivot['user_id'], [
             'pv_modif' => $new_pv_modif
@@ -76,7 +77,7 @@ class ActionController extends Controller
 
         $targetUser = ((new CharacterController())->showOfUser(Character::find($request->target['id']), User::find($request->target['user_id'])))->getData();
 
-        event(new NewAction($targetUser));
+        event(new NewAction('channel', 'heal', $targetUser));
         return response()->json($targetUser, 200);
     }
 }

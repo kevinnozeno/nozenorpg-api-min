@@ -15,15 +15,20 @@ class NewAction implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $target;
+    public $data;
+    protected $channel;
+    protected $event;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($target)
+    public function __construct($channel, $event, $data)
     {
-        $this->target = $target;
+        $this->channel = $channel;
+        $this->event = $event;
+        $this->data = $data;
     }
 
     /**
@@ -33,11 +38,11 @@ class NewAction implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('channel');
+        return new Channel($this->channel);
     }
 
     public function broadcastAs(): string
     {
-        return 'event';
+        return $this->event;
     }
 }
