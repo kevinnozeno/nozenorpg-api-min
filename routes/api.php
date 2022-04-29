@@ -49,4 +49,6 @@ Route::prefix('users/{user}')->group(function () {
     Route::patch('/characters/{character}/heal', [ActionController::class, 'heal']);
 });
 
+Route::patch('/entity/{entity}/action/{action}', [ActionController::class, 'use']);
+
 

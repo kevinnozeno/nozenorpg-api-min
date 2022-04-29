@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewAction;
 use App\Http\Requests\UserCharacter\DestroyUserCharacterRequest;
 use App\Http\Requests\UserCharacter\StoreUserCharacterRequest;
 use App\Http\Requests\UserCharacter\UpdateUserCharacterRequest;
 use App\Models\Character;
+use App\Models\Entity;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\UserCharacter;
@@ -92,9 +94,43 @@ class UserCharacterController extends Controller
         return response()->json($validated);
     }
 
-    public function action(User $user, Character $character, Request $request) {
-        // TODO Créer une table Actions + table polymorphic Actionables (car par exemple un objet peut aussi faire l'action de se déplacer)
-        // TODO Créer juste une route vers le controlleur des actions avec le nom de l'action choisi
-        // TODO Lancer la méthode d'action qui existe dans la table des actions et utilisable par l'entité en question en fonction des actionnables
+    public function attack(Request $request): JsonResponse
+    {
+        $userCharacter = UserCharacter::find($request->user);
+        $target = (Entity::find($request->target_type))->model::find($request->target_id);
+
+        $target->pv_modif -= $userCharacter->character->ad;
+        $target->update();
+
+        event(new NewAction('channel', 'attack', $target));
+        return response()->json($target, 200);
+    }
+
+    public function cast(Request $request): JsonResponse
+    {
+        $userCharacter = UserCharacter::find($request->user);
+        $target = (Entity::find($request->target_type))->model::find($request->target_id);
+
+        $target->pv_modif -= $userCharacter->character->ap;
+        $target->update();
+
+        event(new NewAction('channel', 'cast', $target));
+        return response()->json($target, 200);
+    }
+
+    public function heal(Request $request): JsonResponse
+    {
+        $userCharacter = UserCharacter::find($request->user);
+        $target = (Entity::find($request->target_type))->model::find($request->target_id);
+
+        $target->pv_modif += $userCharacter->character->heal;
+        $target->update();
+
+        event(new NewAction('channel', 'heal', $target));
+        return response()->json($target, 200);
+    }
+
+    public function attachRoom(User $user, Character $character, Request $request) {
+
     }
 }

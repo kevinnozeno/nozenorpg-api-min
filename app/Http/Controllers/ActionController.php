@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Action;
 use App\Models\Character;
+use App\Models\Entity;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,77 +13,10 @@ use Illuminate\Support\Facades\Auth;
 
 class ActionController extends Controller
 {
-    public function attack(User $user, Character $character, Request $request): JsonResponse
+    public function use (Entity $entity, Action $action, Request $request): JsonResponse
     {
-        $characterUser = ((new CharacterController())->showOfUser($character, $user))->getData();
-
-        $targetUser = Character::query()
-            ->where('id', $request->target['id'])
-            ->with(['users' => function ($query) use ($request) {
-                $query->where('id', $request->target['user_id']);
-            }])
-            ->first();
-
-        $new_pv_modif = $targetUser->users[0]->pivot->pv_modif - $characterUser->ad;
-
-        Character::find($targetUser->id)->users()->updateExistingPivot($targetUser->users[0]->pivot['user_id'], [
-            'pv_modif' => $new_pv_modif
-        ]);
-
-        $targetUser = ((new CharacterController())->showOfUser(Character::find($request->target['id']), User::find($request->target['user_id'])))->getData();
-
-        event(new NewAction('channel', 'attack', $targetUser));
-        return response()->json($targetUser, 200);
-    }
-
-    public function cast(User $user, Character $character, Request $request): JsonResponse
-    {
-        $characterUser = ((new CharacterController())->showOfUser($character, $user))->getData();
-
-        $targetUser = Character::query()
-            ->where('id', $request->target['id'])
-            ->with(['users' => function ($query) use ($request) {
-                $query->where('id', $request->target['user_id']);
-            }])
-            ->first();
-
-        $new_pv_modif = $targetUser->users[0]->pivot->pv_modif - $characterUser->ap;
-
-        Character::find($targetUser->id)->users()->updateExistingPivot($targetUser->users[0]->pivot['user_id'], [
-            'pv_modif' => $new_pv_modif
-        ]);
-
-        $targetUser = ((new CharacterController())->showOfUser(Character::find($request->target['id']), User::find($request->target['user_id'])))->getData();
-
-        event(new NewAction('channel', 'cast', $targetUser));
-        return response()->json($targetUser, 200);
-    }
-
-    public function heal(User $user, Character $character, Request $request): JsonResponse
-    {
-        $characterUser = ((new CharacterController())->showOfUser($character, $user))->getData();
-
-        $targetUser = Character::query()
-            ->where('id', $request->target['id'])
-            ->with(['users' => function ($query) use ($request) {
-                $query->where('id', $request->target['user_id']);
-            }])
-            ->first();
-
-        $new_pv_modif = $targetUser->users[0]->pivot->pv_modif + $characterUser->heal;
-        $new_pv_modif = $new_pv_modif > 0 ? 0 : $new_pv_modif;
-
-        Character::find($targetUser->id)->users()->updateExistingPivot($targetUser->users[0]->pivot['user_id'], [
-            'pv_modif' => $new_pv_modif
-        ]);
-
-        $targetUser = ((new CharacterController())->showOfUser(Character::find($request->target['id']), User::find($request->target['user_id'])))->getData();
-
-        event(new NewAction('channel', 'heal', $targetUser));
-        return response()->json($targetUser, 200);
-    }
-
-    public function attachRoom(User $user, Character $character, Request $request) {
-
+        $controller = $entity->controller;
+        $method = $action->method;
+        return response()->json((new $controller)->$method($request));
     }
 }
