@@ -25,6 +25,8 @@ class Character extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_character')->withPivot('level', 'pv_modif');
+        return $this->belongsToMany(User::class, 'user_character')
+            ->withPivot('level', 'pv_modif')
+            ->withTimestamps();
     }
 }

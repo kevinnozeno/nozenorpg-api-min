@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserCharacterTable extends Migration
+class CreateRoomsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,10 @@ class CreateUserCharacterTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_character', function (Blueprint $table) {
+        Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('character_id');
-            $table->integer('level')->default(1);
-            $table->integer('pv_modif')->default(0);
+            $table->string('name');
             $table->timestamps();
-
-            $table->unique(['user_id', 'character_id']);
         });
     }
 
@@ -32,6 +27,6 @@ class CreateUserCharacterTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_character');
+        Schema::dropIfExists('rooms');
     }
 }

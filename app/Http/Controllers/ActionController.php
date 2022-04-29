@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ActionController extends Controller
 {
-    public function attack(Character $character, User $user, Request $request): JsonResponse
+    public function attack(User $user, Character $character, Request $request): JsonResponse
     {
         $characterUser = ((new CharacterController())->showOfUser($character, $user))->getData();
 
@@ -34,7 +34,7 @@ class ActionController extends Controller
         return response()->json($targetUser, 200);
     }
 
-    public function cast(Character $character, User $user, Request $request): JsonResponse
+    public function cast(User $user, Character $character, Request $request): JsonResponse
     {
         $characterUser = ((new CharacterController())->showOfUser($character, $user))->getData();
 
@@ -57,7 +57,7 @@ class ActionController extends Controller
         return response()->json($targetUser, 200);
     }
 
-    public function heal(Character $character, User $user, Request $request): JsonResponse
+    public function heal(User $user, Character $character, Request $request): JsonResponse
     {
         $characterUser = ((new CharacterController())->showOfUser($character, $user))->getData();
 
@@ -79,5 +79,9 @@ class ActionController extends Controller
 
         event(new NewAction('channel', 'heal', $targetUser));
         return response()->json($targetUser, 200);
+    }
+
+    public function attachRoom(User $user, Character $character, Request $request) {
+
     }
 }

@@ -64,27 +64,4 @@ class CharacterController extends Controller
     {
         //
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param Character $character
-     * @param User $user
-     * @return JsonResponse
-     */
-    public function showOfUser(Character $character, User $user): JsonResponse
-    {
-        $characterUser = Character::query()
-            ->where('id', $character->id)
-            ->with(['users' => function ($query) use ($user) {
-                $query->where('id', $user->id);
-            }])
-            ->first();
-
-        $character->actual_pv = $characterUser->pv + $characterUser->users[0]->pivot->pv_modif;
-        $character->level = $characterUser->users[0]->pivot->level;
-        $character->user_id = $characterUser->users[0]->pivot->user_id;
-
-        return response()->json($character);
-    }
 }
