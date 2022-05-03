@@ -37,7 +37,7 @@ class UserController extends Controller
         $user = User::query()
             ->where('username', $request->username)
             ->with(['characters' => function ($query) {
-                $query->select('id', 'name');
+                $query->select('characters.id', 'characters.name');
             }])
             ->first();
 

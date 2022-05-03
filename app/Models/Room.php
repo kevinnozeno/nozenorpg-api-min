@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Room extends Model
@@ -13,14 +14,13 @@ class Room extends Model
     protected $table = 'rooms';
 
     protected $fillable = [
+        'id',
         'name',
+        'level'
     ];
 
-    /**
-     * The rooms that belong to the user_character.
-     */
-    public function user_characters(): MorphToMany
+    public function roomable(): MorphTo
     {
-        return $this->morphToMany(UserCharacter::class, 'roomable');
+        return $this->morphTo();
     }
 }

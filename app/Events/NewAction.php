@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Http\Controllers\ActionController;
+use App\Http\Controllers\SkillController;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;

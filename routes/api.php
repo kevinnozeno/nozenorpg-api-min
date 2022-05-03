@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\ActionController;
+use App\Http\Controllers\RoomableController;
+use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserCharacterController;
@@ -30,7 +31,8 @@ Route::middleware(['auth:sanctum'])->get('/testToken', function (Request $reques
 Route::resources([
     'users' => UserController::class,
     'characters' => CharacterController::class,
-    'rooms' => RoomController::class
+    'rooms' => RoomController::class,
+    'roomables' => RoomableController::class,
 ]);
 
 Route::post('/login', [UserController::class, 'login']);
@@ -40,15 +42,13 @@ Route::post('/logout', [UserController::class, 'logout']);
 //Route::get('/users/{user}/users/{user}', [CharacterController::class, 'showOfUser']);
 
 Route::prefix('users/{user}')->group(function () {
-    Route::resources([
-        'characters' => UserCharacterController::class,
-    ]);
-
-    Route::patch('/characters/{character}/attack', [ActionController::class, 'attack']);
-    Route::patch('/characters/{character}/cast', [ActionController::class, 'cast']);
-    Route::patch('/characters/{character}/heal', [ActionController::class, 'heal']);
+    Route::get('/characters', [UserCharacterController::class, 'index']);
+    Route::get('/characters/{character}', [UserCharacterController::class, 'show']);
+    Route::post('/characters/{character}', [UserCharacterController::class, 'attach']);
+    Route::patch('/characters/{character}', [UserCharacterController::class, 'sync']);
+    Route::delete('/characters/{character}', [UserCharacterController::class, 'detach']);
 });
 
-Route::patch('/entity/{entity}/action/{action}', [ActionController::class, 'use']);
+Route::patch('/entity/{entity}/action/{action}', [SkillController::class, 'use']);
 
 

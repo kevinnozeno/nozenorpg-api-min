@@ -15,12 +15,13 @@ class CreateRoomablesTable extends Migration
     {
         Schema::create('roomables', function (Blueprint $table) {
             $table->foreignId('room_id');
-            $table->foreignId('roomable_id');
-            $table->string('roomable_type');
-
-            $table->unique(['room_id', 'roomable_id', 'roomable_type']);
+            $table->morphs('roomable');
+            $table->json('statistics')->nullable();
+            $table->boolean('is_active')->default(false);
 
             $table->timestamps();
+
+            $table->unique(['room_id', 'roomable_id', 'roomable_type']);
         });
     }
 

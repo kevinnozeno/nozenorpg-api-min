@@ -4,7 +4,7 @@ namespace App\Http\Requests\UserCharacter;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserCharacterRequest extends FormRequest
+class SyncUserCharacterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,8 @@ class StoreUserCharacterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'users' => 'required|array',
-            'characters' => 'required|array',
-            'level' => 'integer|min:1',
-            'pv_modif' => 'integer'
+            'name' => 'required|string',
+            'level' => 'nullable|integer|min:1',
         ];
     }
 }

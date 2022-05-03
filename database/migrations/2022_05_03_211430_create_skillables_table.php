@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEntitiesTable extends Migration
+class CreateSkillablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateEntitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('entities', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('controller');
-            $table->string('model')->nullable();
+        Schema::create('skillables', function (Blueprint $table) {
+            $table->foreignId('skill_id');
+            $table->morphs('skillable');
 
             $table->timestamps();
+
+            $table->unique(['skill_id', 'skillable_id', 'skillable_type']);
         });
     }
 
@@ -30,6 +30,6 @@ class CreateEntitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('entities');
+        Schema::dropIfExists('skillables');
     }
 }

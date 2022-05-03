@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -14,21 +13,15 @@ class UserCharacter extends Pivot
 
     protected $table = 'user_character';
 
-    protected $with = ['user', 'character'];
+    protected $appends = ['roomActive'];
 
-    protected $appends = ['actual_pv'];
+    protected $with = ['user', 'character', 'rooms'];
 
     protected $fillable = [
         'user_id',
         'character_id',
-        'pv_modif',
         'level'
     ];
-
-    public function rooms(): MorphToMany
-    {
-        return $this->morphToMany(Room::class, 'roomable');
-    }
 
     public function user(): HasOne
     {
@@ -40,13 +33,13 @@ class UserCharacter extends Pivot
         return $this->HasOne(Character::class, 'id', 'character_id');
     }
 
-    /**
-     * Get the user's character's initial pv.
-     *
-     * @return int
-     */
-    public function getActualPvAttribute(): int
+    public function rooms(): MorphToMany
     {
-        return $this->character->pv + $this->pv_modif;
+        return $this->morphToMany(Room::class, 'roomable')->withPivot('statistics', 'is_active')->using('App\Models\Roomable');
+    }
+
+    public function getRoomActiveAttribute()
+    {
+        return $this->rooms()->wherePivot('is_active', true)->first();
     }
 }

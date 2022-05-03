@@ -20,6 +20,8 @@ class CreateCharactersTable extends Migration
             $table->integer('ad');
             $table->integer('ap');
             $table->integer('heal');
+            $table->integer('plays')->default(1);
+
             $table->timestamps();
         });
     }

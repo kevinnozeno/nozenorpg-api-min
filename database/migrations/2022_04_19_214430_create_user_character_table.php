@@ -17,8 +17,9 @@ class CreateUserCharacterTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('character_id');
+            $table->string('name');
             $table->integer('level')->default(1);
-            $table->integer('pv_modif')->default(0);
+
             $table->timestamps();
 
             $table->unique(['user_id', 'character_id']);

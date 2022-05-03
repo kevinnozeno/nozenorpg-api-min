@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Events\NewAction;
 use App\Http\Requests\UserCharacter\DestroyUserCharacterRequest;
-use App\Http\Requests\UserCharacter\StoreUserCharacterRequest;
-use App\Http\Requests\UserCharacter\UpdateUserCharacterRequest;
+use App\Http\Requests\UserCharacter\AttachUserCharacterRequest;
+use App\Http\Requests\UserCharacter\SyncUserCharacterRequest;
 use App\Models\Character;
-use App\Models\Entity;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\UserCharacter;
@@ -30,18 +29,18 @@ class UserCharacterController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreUserCharacterRequest $request
+     * @param User $user
+     * @param Character $character
+     * @param AttachUserCharacterRequest $request
      * @return JsonResponse
      */
-    public function store(StoreUserCharacterRequest $request): JsonResponse
+    public function attach(User $user, Character $character, AttachUserCharacterRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        foreach ($validated['users'] as $user) {
-            (User::find($user))->characters()->attach($validated['characters'], [
-                'level' => $validated['level'],
-                'pv_modif' => $validated['pv_modif']
-            ]);
-        }
+        $user->characters()->attach($character->id, [
+            'name' => $validated['name'],
+            'level' => $validated['level']
+        ]);
         return response()->json($validated);
     }
 
@@ -64,73 +63,52 @@ class UserCharacterController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateUserCharacterRequest $request
+     * @param User $user
+     * @param Character $character
+     * @param SyncUserCharacterRequest $request
      * @return JsonResponse
      */
-    public function update(UpdateUserCharacterRequest $request): JsonResponse
+    public function sync(User $user, Character $character, SyncUserCharacterRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        foreach ($validated['users'] as $user) {
-            (User::find($user))->characters()->updateExistingPivot($validated['characters'], [
-                'level' => $validated['level'],
-                'pv_modif' => $validated['pv_modif']
-            ]);
-        }
+        $user->characters()->updateExistingPivot($character->id, [
+            'name' => $validated['name'],
+            'level' => $validated['level'],
+        ]);
         return response()->json($validated);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param DestroyUserCharacterRequest $request
+     * @param User $user
+     * @param Character $character
      * @return JsonResponse
      */
-    public function destroy(DestroyUserCharacterRequest $request): JsonResponse
+    public function detach(User $user, Character $character): JsonResponse
     {
-        $validated = $request->validated();
-        foreach ($validated['users'] as $user) {
-            (User::find($user))->characters()->detach($validated['characters']);
-        }
-        return response()->json($validated);
+        return response()->json($user->characters()->detach($character->id));
     }
 
-    public function attack(Request $request): JsonResponse
-    {
-        $userCharacter = UserCharacter::find($request->user);
-        $target = (Entity::find($request->target_type))->model::find($request->target_id);
-
-        $target->pv_modif -= $userCharacter->character->ad;
-        $target->update();
-
-        event(new NewAction('channel', 'attack', $target));
-        return response()->json($target, 200);
-    }
-
-    public function cast(Request $request): JsonResponse
-    {
-        $userCharacter = UserCharacter::find($request->user);
-        $target = (Entity::find($request->target_type))->model::find($request->target_id);
-
-        $target->pv_modif -= $userCharacter->character->ap;
-        $target->update();
-
-        event(new NewAction('channel', 'cast', $target));
-        return response()->json($target, 200);
-    }
-
-    public function heal(Request $request): JsonResponse
-    {
-        $userCharacter = UserCharacter::find($request->user);
-        $target = (Entity::find($request->target_type))->model::find($request->target_id);
-
-        $target->pv_modif += $userCharacter->character->heal;
-        $target->update();
-
-        event(new NewAction('channel', 'heal', $target));
-        return response()->json($target, 200);
-    }
-
-    public function attachRoom(User $user, Character $character, Request $request) {
-
-    }
+//    public function join(Request $request): JsonResponse
+//    {
+//        $entity = Entity::where('controller', get_class($this))->first();
+//        $entitiesable = Entitiesable::where('entity_id', $entity->id)
+//            ->where('entitiesable_id', $request->user_id)
+//            ->where('entitiesable_type', 'user_character')
+//            ->first();
+//
+//        $lastPlayer = EntitiesableRoom::select('order')->where('room_id', $request->room_id)->orderBy('order', 'DESC')->first();
+//
+//        return response()->json($entitiesable->rooms()->attach($request->room_id, [
+//            'order' => $lastPlayer->order++,
+//            'playing' => 0
+//        ]));
+//    }
+//
+//    public function leave(Request $request): JsonResponse
+//    {
+//        $userCharacter = UserCharacter::find($request->user_id);
+//        return response()->json($userCharacter->rooms()->detach($request->room_id));
+//    }
 }

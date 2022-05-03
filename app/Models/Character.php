@@ -17,16 +17,14 @@ class Character extends Model
         'pv',
         'ad',
         'ap',
-        'heal'
+        'heal',
+        'plays'
     ];
 
-    /**
-     * The users that belong to the character.
-     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_character')
-            ->withPivot('level', 'pv_modif')
+            ->withPivot('level')
             ->withTimestamps();
     }
 }
