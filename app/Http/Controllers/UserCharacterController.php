@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NewAction;
-use App\Http\Requests\UserCharacter\DestroyUserCharacterRequest;
-use App\Http\Requests\UserCharacter\AttachUserCharacterRequest;
-use App\Http\Requests\UserCharacter\SyncUserCharacterRequest;
+use App\Http\Requests\UserCharacter\StoreUserCharacterRequest;
+use App\Http\Requests\UserCharacter\UpdateUserCharacterRequest;
+use App\Http\Requests\UserCharacter\UserCharacterJoinRequest;
+use App\Http\Requests\UserCharacter\UserCharacterUpdateInRoomRequest;
 use App\Models\Character;
 use App\Models\Room;
 use App\Models\User;
@@ -31,10 +31,10 @@ class UserCharacterController extends Controller
      *
      * @param User $user
      * @param Character $character
-     * @param AttachUserCharacterRequest $request
+     * @param StoreUserCharacterRequest $request
      * @return JsonResponse
      */
-    public function attach(User $user, Character $character, AttachUserCharacterRequest $request): JsonResponse
+    public function store(User $user, Character $character, StoreUserCharacterRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $user->characters()->attach($character->id, [
@@ -65,10 +65,10 @@ class UserCharacterController extends Controller
      *
      * @param User $user
      * @param Character $character
-     * @param SyncUserCharacterRequest $request
+     * @param UpdateUserCharacterRequest $request
      * @return JsonResponse
      */
-    public function sync(User $user, Character $character, SyncUserCharacterRequest $request): JsonResponse
+    public function update(User $user, Character $character, UpdateUserCharacterRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $user->characters()->updateExistingPivot($character->id, [
@@ -85,30 +85,38 @@ class UserCharacterController extends Controller
      * @param Character $character
      * @return JsonResponse
      */
-    public function detach(User $user, Character $character): JsonResponse
+    public function destroy(User $user, Character $character): JsonResponse
     {
         return response()->json($user->characters()->detach($character->id));
     }
 
-//    public function join(Request $request): JsonResponse
-//    {
-//        $entity = Entity::where('controller', get_class($this))->first();
-//        $entitiesable = Entitiesable::where('entity_id', $entity->id)
-//            ->where('entitiesable_id', $request->user_id)
-//            ->where('entitiesable_type', 'user_character')
-//            ->first();
-//
-//        $lastPlayer = EntitiesableRoom::select('order')->where('room_id', $request->room_id)->orderBy('order', 'DESC')->first();
-//
-//        return response()->json($entitiesable->rooms()->attach($request->room_id, [
-//            'order' => $lastPlayer->order++,
-//            'playing' => 0
-//        ]));
-//    }
-//
-//    public function leave(Request $request): JsonResponse
-//    {
-//        $userCharacter = UserCharacter::find($request->user_id);
-//        return response()->json($userCharacter->rooms()->detach($request->room_id));
-//    }
+    public function join(UserCharacter $userCharacter, Room $room, UserCharacterJoinRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $validated['statistics']['actualPv'] = $this->actualPvValidation($validated['statistics']['actualPv'], $userCharacter);
+        $userCharacter->rooms()->attach($room->id, $validated);
+        return response()->json($validated);
+    }
+
+    public function updateInRoom(UserCharacter $userCharacter, Room $room, UserCharacterUpdateInRoomRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $validated['statistics']['actualPv'] = $this->actualPvValidation($validated['statistics']['actualPv'], $userCharacter);
+        $userCharacter->rooms()->updateExistingPivot($room->id, $validated);
+        return response()->json($validated);
+    }
+
+    public function leave(UserCharacter $userCharacter, Room $room): JsonResponse
+    {
+        return response()->json($userCharacter->rooms()->detach($room->id));
+    }
+
+    private function actualPvValidation ($actualPv, UserCharacter $userCharacter): int
+    {
+        if (isset($actualPv))
+            $actualPv = $actualPv > $userCharacter->character->pv ? $userCharacter->character->pv : $actualPv;
+        else
+            $actualPv = $userCharacter->character->pv;
+        return $actualPv;
+    }
 }

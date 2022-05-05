@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Room\StoreRoomRequest;
-use App\Http\Requests\Room\UpdateRoomRequest;
 use App\Models\Roomable;
-use http\Env\Request;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\JsonResponse;
 
 class RoomableController extends Controller
@@ -22,39 +20,29 @@ class RoomableController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreRoomRequest $request
-     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store()
     {
-//        $validated = $request->validated();
-//        $room = new Room($validated);
-//        return response()->json($room->save());
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param Room $room
+     * @param Roomable $roomable
      * @return JsonResponse
      */
-    public function show(Request $room): JsonResponse
+    public function show(Roomable $roomable): JsonResponse
     {
-//        return response()->json($room);
+        return response()->json($roomable);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param UpdateRoomRequest $request
-     * @param Room $room
-     * @return JsonResponse
      */
-    public function update(Request $request, Room $room): JsonResponse
+    public function update()
     {
-//        $validated = $request->validated();
-//        return response()->json($room->update($validated));
+        //
     }
 
     /**
@@ -65,6 +53,6 @@ class RoomableController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-//        return response()->json(Room::destroy($id));
+        return response()->json(Roomable::destroy($id));
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests\UserCharacter;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SyncUserCharacterRequest extends FormRequest
+class UserCharacterJoinRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,9 @@ class SyncUserCharacterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'level' => 'nullable|integer|min:1',
+            'statistics' => 'nullable|array',
+            'statistics.actualPv' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
         ];
     }
 }

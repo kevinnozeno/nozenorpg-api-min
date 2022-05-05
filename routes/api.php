@@ -42,12 +42,18 @@ Route::post('/logout', [UserController::class, 'logout']);
 //Route::get('/users/{user}/users/{user}', [CharacterController::class, 'showOfUser']);
 
 Route::prefix('users/{user}')->group(function () {
-    Route::get('/characters', [UserCharacterController::class, 'index']);
-    Route::get('/characters/{character}', [UserCharacterController::class, 'show']);
-    Route::post('/characters/{character}', [UserCharacterController::class, 'attach']);
-    Route::patch('/characters/{character}', [UserCharacterController::class, 'sync']);
-    Route::delete('/characters/{character}', [UserCharacterController::class, 'detach']);
+    Route::resources([
+        'characters' => UserCharacterController::class
+    ], ['as' => 'users']);
 });
+
+Route::prefix('userCharacters/{userCharacter}')->group(function () {
+    Route::post('/room/{room}', [UserCharacterController::class, 'join']);
+    Route::patch('/room/{room}', [UserCharacterController::class, 'updateInRoom']);
+    Route::delete('/room/{room}', [UserCharacterController::class, 'leave']);
+});
+
+//Route::post('/roomables/{character}', [UserCharacterController::class, 'attach']);
 
 Route::patch('/entity/{entity}/action/{action}', [SkillController::class, 'use']);
 

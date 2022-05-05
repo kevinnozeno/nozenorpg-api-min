@@ -28,8 +28,13 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         Relation::morphMap([
-            'user_character' => 'App\Models\UserCharacter',
+            'user' => 'App\Models\User',
             'character' => 'App\Models\Character',
+            'userCharacter' => 'App\Models\UserCharacter',
+            'room' => 'App\Models\Room',
+            'roomable' => 'App\Models\Roomable',
+            'skill' => 'App\Models\Skill',
+            'skillable' => 'App\Models\Skillable',
         ]);
     }
 }

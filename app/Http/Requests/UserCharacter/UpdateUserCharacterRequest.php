@@ -4,7 +4,7 @@ namespace App\Http\Requests\UserCharacter;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AttachUserCharacterRequest extends FormRequest
+class UpdateUserCharacterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class AttachUserCharacterRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'level' => 'nullable|integer|min:1'
+            'level' => 'nullable|integer|min:1',
         ];
     }
 }

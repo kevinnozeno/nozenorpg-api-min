@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Room extends Model
 {
@@ -19,8 +17,15 @@ class Room extends Model
         'level'
     ];
 
-    public function roomable(): MorphTo
+    /**
+     * Get all of the user_characters that are assigned this room.
+     */
+    public function user_characters()
     {
-        return $this->morphTo();
+        return $this
+            ->morphedByMany(UserCharacter::class, 'roomable')
+            ->withPivot('statistics', 'is_active')
+            ->using('App\Models\Roomable')
+            ->withTimestamps();
     }
 }

@@ -13,9 +13,7 @@ class UserCharacter extends Pivot
 
     protected $table = 'user_character';
 
-    protected $appends = ['roomActive'];
-
-    protected $with = ['user', 'character', 'rooms'];
+    protected $with = ['user', 'character'];
 
     protected $fillable = [
         'user_id',
@@ -35,7 +33,11 @@ class UserCharacter extends Pivot
 
     public function rooms(): MorphToMany
     {
-        return $this->morphToMany(Room::class, 'roomable')->withPivot('statistics', 'is_active')->using('App\Models\Roomable');
+        return $this
+            ->morphToMany(Room::class, 'roomable')
+            ->withPivot('statistics', 'is_active')
+            ->using('App\Models\Roomable')
+            ->withTimestamps();
     }
 
     public function getRoomActiveAttribute()

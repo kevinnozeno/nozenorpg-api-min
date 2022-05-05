@@ -43,7 +43,7 @@ class User extends Authenticatable
     public function characters(): BelongsToMany
     {
         return $this->belongsToMany(Character::class, 'user_character')
-            ->withPivot('level', 'pv_modif')
+            ->withPivot('level')
             ->withTimestamps();
     }
 }

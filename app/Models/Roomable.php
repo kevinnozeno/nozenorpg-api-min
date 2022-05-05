@@ -16,8 +16,6 @@ class Roomable extends MorphPivot
         'statistics' => AsArrayObject::class
     ];
 
-//    protected $appends = ['actual_pv'];
-
     protected $fillable = [
         'room_id',
         'roomable_id',
@@ -25,14 +23,4 @@ class Roomable extends MorphPivot
         'statistics',
         'is_active'
     ];
-
-//    /**
-//     * Get the user's character's initial pv.
-//     *
-//     * @return int
-//     */
-//    public function getActualPvAttribute(): int
-//    {
-//        return $this->character->pv + $this->pv_modif;
-//    }
 }
