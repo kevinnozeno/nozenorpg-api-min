@@ -14,6 +14,7 @@ class CreateRoomablesTable extends Migration
     public function up()
     {
         Schema::create('roomables', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('room_id');
             $table->morphs('roomable');
             $table->json('statistics')->nullable();

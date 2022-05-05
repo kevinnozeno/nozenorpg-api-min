@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\UserCharacterHelper;
 use App\Http\Requests\UserCharacter\StoreUserCharacterRequest;
 use App\Http\Requests\UserCharacter\UpdateUserCharacterRequest;
 use App\Http\Requests\UserCharacter\UserCharacterJoinRequest;
 use App\Http\Requests\UserCharacter\UserCharacterUpdateInRoomRequest;
 use App\Models\Character;
 use App\Models\Room;
+use App\Models\Roomable;
 use App\Models\User;
 use App\Models\UserCharacter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class UserCharacterController extends Controller
 {
@@ -101,7 +104,7 @@ class UserCharacterController extends Controller
     public function updateInRoom(UserCharacter $userCharacter, Room $room, UserCharacterUpdateInRoomRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $validated['statistics']['actualPv'] = $this->actualPvValidation($validated['statistics']['actualPv'], $userCharacter);
+        $validated['statistics']['actualPv'] = UserCharacterHelper::actualPvValidation($validated['statistics']['actualPv'], $userCharacter->character->pv);
         $userCharacter->rooms()->updateExistingPivot($room->id, $validated);
         return response()->json($validated);
     }
@@ -109,14 +112,5 @@ class UserCharacterController extends Controller
     public function leave(UserCharacter $userCharacter, Room $room): JsonResponse
     {
         return response()->json($userCharacter->rooms()->detach($room->id));
-    }
-
-    private function actualPvValidation ($actualPv, UserCharacter $userCharacter): int
-    {
-        if (isset($actualPv))
-            $actualPv = $actualPv > $userCharacter->character->pv ? $userCharacter->character->pv : $actualPv;
-        else
-            $actualPv = $userCharacter->character->pv;
-        return $actualPv;
     }
 }

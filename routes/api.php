@@ -33,6 +33,7 @@ Route::resources([
     'characters' => CharacterController::class,
     'rooms' => RoomController::class,
     'roomables' => RoomableController::class,
+    'skills' => SkillController::class,
 ]);
 
 Route::post('/login', [UserController::class, 'login']);
@@ -53,8 +54,6 @@ Route::prefix('userCharacters/{userCharacter}')->group(function () {
     Route::delete('/room/{room}', [UserCharacterController::class, 'leave']);
 });
 
-//Route::post('/roomables/{character}', [UserCharacterController::class, 'attach']);
-
-Route::patch('/entity/{entity}/action/{action}', [SkillController::class, 'use']);
+Route::post('roomables/{roomable}/use/{skill}', [RoomableController::class, 'use']);
 
 

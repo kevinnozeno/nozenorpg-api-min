@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\SkillTrait;
 use App\Models\Roomable;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class RoomableController extends Controller
 {
+    use SkillTrait;
+
     /**
      * Display a listing of the resource.
      *
@@ -54,5 +58,11 @@ class RoomableController extends Controller
     public function destroy($id): JsonResponse
     {
         return response()->json(Roomable::destroy($id));
+    }
+
+    public function use (Roomable $roomable, string $skill, Request $request): JsonResponse
+    {
+        $method = Str::camel($skill);
+        return response()->json($this->$method($roomable, $request));
     }
 }
