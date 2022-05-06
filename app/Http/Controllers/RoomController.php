@@ -40,7 +40,7 @@ class RoomController extends Controller
      */
     public function show(Room $room): JsonResponse
     {
-        return response()->json($room);
+        return response()->json(Room::with('user_characters')->find($room->id));
     }
 
     /**

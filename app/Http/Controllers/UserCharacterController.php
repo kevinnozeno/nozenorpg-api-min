@@ -57,6 +57,7 @@ class UserCharacterController extends Controller
     public function show(User $user, Character $character): JsonResponse
     {
         $characterUser = UserCharacter::where('user_id', $user->id)
+            ->with('rooms')
             ->where('character_id', $character->id)
             ->first();
 

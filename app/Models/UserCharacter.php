@@ -15,6 +15,8 @@ class UserCharacter extends Pivot
 
     protected $with = ['user', 'character'];
 
+    protected $appends = ['roomActive'];
+
     protected $fillable = [
         'user_id',
         'character_id',
