@@ -103,7 +103,7 @@ trait SkillTrait
 
         $messages = [
             $user->name . " s'est soigné de " . $user->character->heal . " PV.",
-//            $nextTurnResponse
+            $nextTurnResponse
         ];
 
         event(new NewAction($room, $messages));
