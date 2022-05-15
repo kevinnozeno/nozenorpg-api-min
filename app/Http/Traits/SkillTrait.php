@@ -39,7 +39,10 @@ trait SkillTrait
         $target = $modelTarget::find($target->roomable_id);
 
         $messages = [
-            $user->name . " a attaqué " . $target->name . " en lui infligeant " . $user->character->ad . " de dégats AD.",
+            [
+                "title" => "Action : Attaquer",
+                "message" => $user->name . " a attaqué " . $target->name . " en lui infligeant " . $user->character->ad . " de dégats AD.",
+            ],
             $nextTurnResponse
         ];
 
@@ -72,7 +75,10 @@ trait SkillTrait
         $target = $modelTarget::find($target->roomable_id);
 
         $messages = [
-            $user->name . " a ensorcellé " . $target->name . " en lui infligeant " . $user->character->ap . " de dégats AD.",
+            [
+                "title" => "Action : Ensorceller",
+                "message" => $user->name . " a ensorcellé " . $target->name . " en lui infligeant " . $user->character->ap . " de dégats AP.",
+            ],
             $nextTurnResponse
         ];
 
@@ -102,7 +108,10 @@ trait SkillTrait
         $room = Room::with('user_characters')->find($roomable->room_id);
 
         $messages = [
-            $user->name . " s'est soigné de " . $user->character->heal . " PV.",
+            [
+                "title" => "Action : Soigner",
+                "message" => $user->name . " s'est soigné de " . $user->character->heal . " PV.",
+            ],
             $nextTurnResponse
         ];
 

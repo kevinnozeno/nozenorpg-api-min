@@ -2,7 +2,6 @@
 
 namespace App\Http\Helpers;
 
-use App\Models\Room;
 use App\Models\Roomable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -13,7 +12,7 @@ class RoomHelper
         $this->roomId = $roomId;
     }
 
-    public function nextTurn (): string
+    public function nextTurn (): array
     {
         // UPDATE ROOMABLE PLAYING STATUS
         $roomablePlaying = Roomable::where('room_id', $this->roomId)->where('statistics->playing', true)->first();
@@ -41,6 +40,10 @@ class RoomHelper
         $model = Relation::getMorphedModel($nextRoomable->roomable_type);
         $nextEntity = $model::find($nextRoomable->roomable_id);
 
-        return "C'est au tour de " . $nextEntity->name;
+        return [
+            "title" => "Tour",
+            "subtitle" => "Joueur suivant",
+            "message" => "C'est au tour de " . $nextEntity->name,
+        ];
     }
 }
