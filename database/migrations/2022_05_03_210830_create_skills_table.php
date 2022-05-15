@@ -19,6 +19,7 @@ class CreateSkillsTable extends Migration
             $table->string('name');
             $table->char('color', 50);
             $table->integer('level')->default(1);
+            $table->string('type')->default('one');
 
             $table->timestamps();
         });

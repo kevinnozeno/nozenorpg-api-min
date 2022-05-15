@@ -18,6 +18,7 @@ class Roomable extends MorphPivot
     ];
 
     protected $fillable = [
+        'id',
         'room_id',
         'roomable_id',
         'roomable_type',

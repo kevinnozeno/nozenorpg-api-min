@@ -3,7 +3,9 @@
 namespace App\Http\Traits;
 
 use App\Events\NewAction;
+use App\Http\Helpers\RoomHelper;
 use App\Http\Helpers\UserCharacterHelper;
+use App\Models\Room;
 use App\Models\Roomable;
 use App\Models\UserCharacter;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -27,12 +29,22 @@ trait SkillTrait
         }
 
         $target->statistics = $statistics;
-
-
         $target->update();
 
-        event(new NewAction('room-'.$roomable->room_id, 'attack', $target));
-        return response()->json($target, 200);
+        $nextTurnResponse = (new RoomHelper($roomable->room_id))->nextTurn();
+
+        $room = Room::with('user_characters')->find($roomable->room_id);
+
+        $modelTarget = Relation::getMorphedModel($target->roomable_type);
+        $target = $modelTarget::find($target->roomable_id);
+
+        $messages = [
+            $user->name . " a attaqué " . $target->name . " en lui infligeant " . $user->character->ad . " de dégats AD.",
+            $nextTurnResponse
+        ];
+
+        event(new NewAction($room, $messages));
+        return response()->json(["room" => $room, "messages" => $messages], 200);
     }
 
     public function cast(Roomable $roomable, Request $request): JsonResponse
@@ -50,18 +62,29 @@ trait SkillTrait
         }
 
         $target->statistics = $statistics;
-
         $target->update();
 
-        event(new NewAction('room-'.$roomable->room_id, 'cast', $target));
-        return response()->json($target, 200);
+        $nextTurnResponse = (new RoomHelper($roomable->room_id))->nextTurn();
+
+        $room = Room::with('user_characters')->find($roomable->room_id);
+
+        $modelTarget = Relation::getMorphedModel($target->roomable_type);
+        $target = $modelTarget::find($target->roomable_id);
+
+        $messages = [
+            $user->name . " a ensorcellé " . $target->name . " en lui infligeant " . $user->character->ap . " de dégats AD.",
+            $nextTurnResponse
+        ];
+
+        event(new NewAction($room, $messages));
+        return response()->json(["room" => $room, "messages" => $messages], 200);
     }
 
     public function heal(Roomable $roomable): JsonResponse
     {
         $model = Relation::getMorphedModel($roomable->roomable_type);
         $user = $model::find($roomable->roomable_id);
-        $target = Roomable::find($roomable->roomable_id);
+        $target = Roomable::find($roomable->id);
 
         $statistics = $target->statistics;
 
@@ -72,10 +95,18 @@ trait SkillTrait
         }
 
         $target->statistics = $statistics;
-
         $target->update();
 
-        event(new NewAction('room-'.$roomable->room_id, 'heal', $target));
-        return response()->json($target, 200);
+        $nextTurnResponse = (new RoomHelper($roomable->room_id))->nextTurn();
+
+        $room = Room::with('user_characters')->find($roomable->room_id);
+
+        $messages = [
+            $user->name . " s'est soigné de " . $user->character->heal . " PV.",
+//            $nextTurnResponse
+        ];
+
+        event(new NewAction($room, $messages));
+        return response()->json(["room" => $room, "messages" => $messages], 200);
     }
 }

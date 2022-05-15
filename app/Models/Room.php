@@ -24,7 +24,8 @@ class Room extends Model
     {
         return $this
             ->morphedByMany(UserCharacter::class, 'roomable')
-            ->withPivot('statistics', 'is_active')
+            ->withPivot('statistics', 'is_active', 'id')
+            ->orderBy('statistics->order')
             ->using('App\Models\Roomable')
             ->withTimestamps();
     }

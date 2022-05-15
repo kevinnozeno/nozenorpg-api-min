@@ -33,6 +33,14 @@ class UserCharacter extends Pivot
         return $this->HasOne(Character::class, 'id', 'character_id');
     }
 
+    public function skills(): MorphToMany
+    {
+        return $this
+            ->morphToMany(Skill::class, 'skillable')
+            ->using('App\Models\Skillable')
+            ->withTimestamps();
+    }
+
     public function rooms(): MorphToMany
     {
         return $this

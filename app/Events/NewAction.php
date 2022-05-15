@@ -2,11 +2,9 @@
 
 namespace App\Events;
 
-use App\Http\Controllers\SkillController;
+use App\Models\Room;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -15,20 +13,18 @@ class NewAction implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $data;
-    protected $channel;
-    protected $event;
+    public Room $room;
+    public array $messages;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($channel, $event, $data)
+    public function __construct($room, array $messages)
     {
-        $this->channel = $channel;
-        $this->event = $event;
-        $this->data = $data;
+        $this->room = $room;
+        $this->messages = $messages;
     }
 
     /**
@@ -38,11 +34,11 @@ class NewAction implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        return new Channel($this->channel);
+        return new Channel('room-' . $this->room->id);
     }
 
     public function broadcastAs(): string
     {
-        return $this->event;
+        return 'update';
     }
 }

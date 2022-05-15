@@ -17,6 +17,7 @@ class Skill extends Model
         'name',
         'color',
         'level',
+        'type'
     ];
 
     public function characters(): MorphToMany
