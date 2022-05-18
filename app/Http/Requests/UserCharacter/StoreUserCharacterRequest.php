@@ -24,19 +24,9 @@ class StoreUserCharacterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'room_id' => 'required|integer',
-            'roomable_id' => 'required|integer',
-            'roomable_type' => 'required|string',
-            'statistics' => 'nullable|array',
-            'is_active' => 'nullable|boolean',
+            'character_id' => 'required|integer',
+            'name' => 'required|string',
+            'level' => 'required|integer'
         ];
-    }
-
-    /**
-     * The data to be validated should be processed as JSON.
-     */
-    protected function prepareForValidation()
-    {
-        return  $this->merge(json_decode($this->statistics, true));
     }
 }

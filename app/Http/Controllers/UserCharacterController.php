@@ -33,14 +33,13 @@ class UserCharacterController extends Controller
      * Store a newly created resource in storage.
      *
      * @param User $user
-     * @param Character $character
      * @param StoreUserCharacterRequest $request
      * @return JsonResponse
      */
-    public function store(User $user, Character $character, StoreUserCharacterRequest $request): JsonResponse
+    public function store(User $user, StoreUserCharacterRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $user->characters()->attach($character->id, [
+        $user->characters()->attach($validated['character_id'], [
             'name' => $validated['name'],
             'level' => $validated['level']
         ]);
