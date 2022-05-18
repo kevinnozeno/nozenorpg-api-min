@@ -98,6 +98,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         $validated = $request->validated();
+        $validated['password'] = Hash::make($validated['password']);
         return response()->json($user->update($validated));
     }
 
