@@ -72,6 +72,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        $validated['password'] = Hash::make($validated['password']);
         $user = new User($validated);
         return response()->json($user->save());
     }
