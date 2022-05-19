@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Room extends Model
 {
@@ -20,7 +21,7 @@ class Room extends Model
     /**
      * Get all of the user_characters that are assigned this room.
      */
-    public function user_characters()
+    public function user_characters(): MorphToMany
     {
         return $this
             ->morphedByMany(UserCharacter::class, 'roomable')
