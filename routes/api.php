@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\RoomableController;
+use App\Http\Controllers\SkillableController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\RoomController;
@@ -33,7 +34,7 @@ Route::resources([
     'characters' => CharacterController::class,
     'rooms' => RoomController::class,
     'roomables' => RoomableController::class,
-    'skills' => SkillController::class,
+    'skills' => SkillController::class
 ]);
 
 Route::post('/login', [UserController::class, 'login']);
@@ -52,6 +53,13 @@ Route::prefix('userCharacters/{userCharacter}')->group(function () {
     Route::post('/room/{room}', [UserCharacterController::class, 'join']);
     Route::patch('/room/{room}', [UserCharacterController::class, 'updateInRoom']);
     Route::delete('/room/{room}', [UserCharacterController::class, 'leave']);
+});
+
+Route::prefix('skills/{skill}')->group(function () {
+    Route::get('/{skillable_type}', [SkillableController::class, 'index']);
+    Route::post('/{skillable_type}/{skillable_id}', [SkillableController::class, 'store']);
+    Route::get('/{skillable_type}/{skillable_id}', [SkillableController::class, 'show']);
+    Route::delete('/{skillable_type}/{skillable_id}', [SkillableController::class, 'destroy']);
 });
 
 Route::post('roomables/{roomable}/use/{skill}', [RoomableController::class, 'use']);

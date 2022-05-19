@@ -22,11 +22,11 @@ class Skill extends Model
 
     public function characters(): MorphToMany
     {
-        return $this->morphedByMany(Character::class, 'skillable');
+        return $this->morphedByMany(Character::class, 'skillable')->withTimestamps();;
     }
 
     public function user_characters(): MorphToMany
     {
-        return $this->morphedByMany(UserCharacter::class, 'skillable');
+        return $this->morphedByMany(UserCharacter::class, 'skillable')->withTimestamps();;
     }
 }
