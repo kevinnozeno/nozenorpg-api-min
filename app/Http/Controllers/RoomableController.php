@@ -41,11 +41,11 @@ class RoomableController extends Controller
 
         $userCharacter = (new (Relation::getMorphedModel($validated['roomable_type'])))->find($validated['roomable_id']);
 
-        $statistics = $lastPlayer->statistics;
+        $statistics = $lastPlayer?->statistics;
 
         if ($validated['roomable_type'] === 'userCharacter') {
             $statistics = [
-                'order' => $statistics['order'] + 1,
+                'order' => $statistics ? $statistics['order'] + 1 : 1,
                 'playing' => false,
                 'actualPv' => $userCharacter->character->pv
             ];
